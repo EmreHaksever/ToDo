@@ -7,6 +7,7 @@
         public string PasswordHash { get; set; } = string.Empty;
 
         // Navigation property
-        public List<TaskItem> Tasks { get; set; }
+        public List<TaskItem>? Tasks { get; set; } = new List<TaskItem>();
+
     }
 }
