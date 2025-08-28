@@ -16,6 +16,12 @@
 
         public TaskStatus Status { get; set; } = TaskStatus.Todo;
 
+        public TaskItem()
+        {
+            DueDate = DateTime.Now; // Yeni task eklenince varsayılan tarih
+        }
+
+
 
 
 
