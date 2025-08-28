@@ -8,10 +8,12 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-});
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -50,7 +52,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseAuthentication(); // Authentication eklenmeli
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseAuthorization();
 app.MapControllers();

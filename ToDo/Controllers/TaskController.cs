@@ -38,6 +38,18 @@ namespace ToDo.Controllers
             }
         }
 
+        [HttpGet("status/{status}")]
+        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasksByStatus(ToDo.Models.TaskStatus status)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var tasks = await _context.Tasks
+                .Where(t => t.UserId == userId && t.Status == status)
+                .ToListAsync();
+            return tasks;
+        }
+
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItem>> GetTask(int id)
         {
@@ -62,10 +74,10 @@ namespace ToDo.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask(TaskItem task)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            //var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
             // Task ekleyen kullanıcının id'sini ata
-            task.UserId = userId;
+            //task.UserId = userId;
 
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
