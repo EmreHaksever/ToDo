@@ -1,4 +1,6 @@
-﻿namespace ToDo.Models
+﻿using System.Text.Json.Serialization;
+
+namespace ToDo.Models
 {
     public class User
     {
@@ -9,6 +11,7 @@
         public string Role { get; set; } = "User"; // default: User
 
         // Navigation property
+        [JsonIgnore]
         public List<TaskItem>? Tasks { get; set; } = new List<TaskItem>();
 
     }

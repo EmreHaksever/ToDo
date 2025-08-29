@@ -21,22 +21,44 @@ namespace ToDo.Controllers
 
         // GET: api/task
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
+        public async Task<ActionResult> GetTasks()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (userRole == "Admin")
             {
-                // Admin tüm taskları görebilir
-                return await _context.Tasks.ToListAsync();
+                return Ok(await _context.Tasks
+                    .Include(t => t.User)
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.Title,
+                        t.Description,
+                        t.DueDate,
+                        t.Status,
+                        UserName = t.User.Username
+                    })
+                    .ToListAsync());
             }
             else
             {
-                // Normal kullanıcı sadece kendi tasklarını görebilir
-                return await _context.Tasks.Where(t => t.UserId == userId).ToListAsync();
+                return Ok(await _context.Tasks
+                    .Include(t => t.User)
+                    .Where(t => t.UserId == userId)
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.Title,
+                        t.Description,
+                        t.DueDate,
+                        t.Status,
+                        UserName = t.User.Username
+                    })
+                    .ToListAsync());
             }
         }
+
 
         [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasksByStatus(ToDo.Models.TaskStatus status)
