@@ -64,11 +64,24 @@ namespace ToDo.Controllers
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasksByStatus(ToDo.Models.TaskStatus status)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            var tasks = await _context.Tasks
-                .Where(t => t.UserId == userId && t.Status == status)
-                .ToListAsync();
-            return tasks;
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userRole == "Admin")
+            {
+                // Admin tüm kullanıcıların tasklarını görebilir
+                return await _context.Tasks
+                    .Where(t => t.Status == status)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Normal kullanıcı sadece kendi tasklarını görebilir
+                return await _context.Tasks
+                    .Where(t => t.UserId == userId && t.Status == status)
+                    .ToListAsync();
+            }
         }
+
 
 
 
